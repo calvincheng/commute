@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useCopyToClipboard } from "react-use";
 import { css } from "@emotion/react";
 
@@ -32,6 +32,7 @@ const Button = ({ children, onClick, disabled = false }: any) => {
   return (
     <div
       css={css`
+        user-select: none;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -88,6 +89,10 @@ function App() {
   const [toHKSTP, setToHKSTP] = useState(true);
   const [_, copyToClipboard] = useCopyToClipboard();
 
+  const stops = useMemo(() => {
+    return toHKSTP ? [...STOPS] : [...STOPS].reverse();
+  }, [toHKSTP, STOPS]);
+
   return (
     <div
       css={css`
@@ -98,19 +103,91 @@ function App() {
         gap: 16px;
       `}
     >
-      <div>
+      <div
+        css={css`
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          margin-bottom: 12px;
+        `}
+      >
+        <div
+          css={css`
+            text-align: right;
+          `}
+        >
+          <b>Name</b>
+        </div>
         <input
           value={name}
-          placeholder="Name"
+          placeholder="Anonymous"
           css={css`
+            border: none;
+            border-bottom: 2px solid black;
             width: 160px;
-            padding: 8px 8px;
-            margin-bottom: 12px;
+            margin-top: 4px;
+            padding-bottom: 4px;
           `}
           onChange={(event) => setName(event.target.value)}
         />
       </div>
-      {STOPS.map(({ name }, index) => {
+      <div
+        css={css`
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          margin-bottom: 12px;
+        `}
+      >
+        <div
+          css={css`
+            text-align: right;
+          `}
+        >
+          <b>Direction</b>
+        </div>
+        <div
+          css={css`
+            padding: 8px 16px;
+            background: ${!toHKSTP ? "#00000011" : "black"};
+            color: ${!toHKSTP ? "black" : "white"};
+            font-weight: ${toHKSTP ? "bold" : "normal"};
+            border-radius: 8px;
+            width: 100px;
+          `}
+        >
+          <Button
+            onClick={() => {
+              setTimes(Array(STOPS.length).fill(null));
+              setStop(0);
+              setToHKSTP(true);
+            }}
+          >
+            HKSTP
+          </Button>
+        </div>
+        <div
+          css={css`
+            padding: 8px 16px;
+            background: ${toHKSTP ? "#00000011" : "black"};
+            color: ${toHKSTP ? "black" : "white"};
+            font-weight: ${!toHKSTP ? "bold" : "normal"};
+            border-radius: 8px;
+            width: 100px;
+          `}
+        >
+          <Button
+            onClick={() => {
+              setTimes(Array(STOPS.length).fill(null));
+              setStop(0);
+              setToHKSTP(false);
+            }}
+          >
+            Admiralty
+          </Button>
+        </div>
+      </div>
+      {stops.map(({ name }, index) => {
         return (
           <Stop
             name={name}
@@ -165,6 +242,7 @@ function App() {
                   ...times.map((t) => new Date(t).toLocaleTimeString()),
                 ];
                 const toCopy = `=SPLIT("${cells.join(",")}", ",")`;
+                // const toCopy = cells.join(",");
                 copyToClipboard(toCopy);
               }}
             >
