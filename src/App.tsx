@@ -3,6 +3,9 @@ import { useState, useMemo } from "react";
 import { useCopyToClipboard } from "react-use";
 import { css } from "@emotion/react";
 
+const SHEETS_LINK =
+  "https://docs.google.com/spreadsheets/d/10qlHs98IGi_cOZzHwBLjJrX1EXl0MrB-HloPh8lR7Uo/edit";
+
 const STOPS = [
   { name: "Admiralty" },
   { name: "Exhibition Center" },
@@ -217,7 +220,6 @@ function App() {
           <div
             css={css`
               text-align: right;
-              width: 120px;
             `}
           >
             <b>COPY RESULTS</b>
@@ -272,6 +274,13 @@ function App() {
             </Button>
           </div>
         </div>
+      )}
+      {stop >= STOPS.length && (
+        <a href={SHEETS_LINK} target="_blank">
+          <b>
+            <small>Link to Google Sheet here</small>
+          </b>
+        </a>
       )}
     </div>
   );
